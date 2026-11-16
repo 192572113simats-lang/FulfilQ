@@ -1,0 +1,6 @@
+{
+  "name": "FulfillIQ",
+  "description": "Omnichannel order fulfilment platform connecting checkout, atomic stock reservation, idempotent payments, barcode picking, dispatch, tracking, and auditable regional refunds.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
