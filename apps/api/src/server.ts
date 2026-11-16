@@ -3,12 +3,14 @@ import { getConfig } from './config.ts';
 import { getDb } from './db/index.ts';
 import { seedDatabase } from './db/seed.ts';
 import { startReservationExpiryJob } from './jobs/reservationExpiryJob.ts';
+import { syncLocalCsvFiles } from './services/csvService.ts';
 import { createApiApp } from './app.ts';
 
 async function start() {
   const cfg = getConfig();
   const db = getDb();
   await seedDatabase(db, false);
+  await syncLocalCsvFiles(db);
   startReservationExpiryJob(db, 30_000);
 
   const app = createApiApp(db);

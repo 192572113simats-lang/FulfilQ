@@ -6,6 +6,7 @@ import { DbClient } from '../db/index.ts';
 import { maskEmail, requireAuth, requireRole, shouldMaskCustomerContact } from '../middleware/auth.ts';
 import { HttpError } from '../middleware/errorHandler.ts';
 import { writeAuditLog } from '../services/auditService.ts';
+import { scheduleCsvSync } from '../services/csvService.ts';
 import { transitionOrderStatus } from '../services/orderStateMachine.ts';
 
 const ReturnRequestSchema = z.object({
@@ -111,6 +112,7 @@ export function createReturnsRouter(db: DbClient): Router {
           };
         });
 
+        scheduleCsvSync(db);
         res.status(201).json({ returnRequest: created });
       } catch (err) {
         next(err);
@@ -226,6 +228,7 @@ export function createReturnsRouter(db: DbClient): Router {
           return { id: ret.id, orderId: ret.order_id, status: 'REFUND_PENDING' };
         });
 
+        scheduleCsvSync(db);
         res.json({ returnRequest: updated });
       } catch (err) {
         next(err);
@@ -336,6 +339,7 @@ export function createReturnsRouter(db: DbClient): Router {
           };
         });
 
+        scheduleCsvSync(db);
         res.json({ decision: outcome });
       } catch (err) {
         next(err);

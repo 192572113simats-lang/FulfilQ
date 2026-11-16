@@ -4,6 +4,7 @@ export interface AppConfig {
   corsOrigins: string[];
   dbDialect: 'sqlite' | 'postgres';
   sqlitePath: string;
+  csvDir: string;
   databaseUrl: string;
   jwtSecret: string;
   jwtExpiresIn: string;
@@ -31,6 +32,7 @@ export function getConfig(): AppConfig {
     corsOrigins: origins,
     dbDialect: process.env.DB_DIALECT === 'postgres' ? 'postgres' : 'sqlite',
     sqlitePath: process.env.SQLITE_PATH || './data/fulfilliq.db',
+    csvDir: process.env.CSV_DIR || './data/csv',
     databaseUrl:
       process.env.DATABASE_URL || 'postgres://fulfilliq:fulfilliq_dev@localhost:5432/fulfilliq',
     jwtSecret: process.env.JWT_SECRET || 'fulfilliq-dev-only-jwt-secret-change-in-prod',

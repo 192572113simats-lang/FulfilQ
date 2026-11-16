@@ -20,6 +20,13 @@ export function getOpenApiSpec() {
     paths: {
       '/health': { get: { summary: 'Liveness probe', security: [], responses: { '200': { description: 'OK' } } } },
       '/ready': { get: { summary: 'Readiness probe (DB connectivity)', security: [], responses: { '200': { description: 'Ready' }, '503': { description: 'Not ready' } } } },
+      '/api/auth/register': {
+        post: {
+          summary: 'Create a new customer account (stored locally in SQLite + users.csv)',
+          security: [],
+          responses: { '201': { description: 'Account created + JWT' }, '409': { description: 'Email already exists' } },
+        },
+      },
       '/api/auth/login': {
         post: {
           summary: 'Login with email & password (rate-limited)',
@@ -28,6 +35,11 @@ export function getOpenApiSpec() {
         },
       },
       '/api/auth/me': { get: { summary: 'Get authenticated user profile', responses: { '200': { description: 'User' } } } },
+      '/api/csv/status': { get: { summary: 'Inspect local SQLite & CSV mirror file status', responses: { '200': { description: 'Local CSV files status' } } } },
+      '/api/csv/sync': { post: { summary: 'Force sync local SQLite tables to ./data/csv/*.csv', responses: { '200': { description: 'Synced file summary' } } } },
+      '/api/csv/template/{dataset}': { get: { summary: 'Download sample CSV template (users, inventory, orders)', responses: { '200': { description: 'CSV file' } } } },
+      '/api/csv/export/{dataset}': { get: { summary: 'Export RBAC-masked CSV (users, inventory, orders, returns, audit)', responses: { '200': { description: 'CSV file' } } } },
+      '/api/csv/import/{dataset}': { post: { summary: 'Import CSV records into local DB & refresh CSV mirrors (users, inventory, orders)', responses: { '200': { description: 'Import report' } } } },
       '/api/regions': { get: { summary: 'List regional policy configurations', security: [], responses: { '200': { description: 'Regions' } } } },
       '/api/warehouses': { get: { summary: 'List active regional warehouses', security: [], responses: { '200': { description: 'Warehouses' } } } },
       '/api/products': { get: { summary: 'Browse catalog with warehouse stock levels', security: [], responses: { '200': { description: 'Products' } } } },

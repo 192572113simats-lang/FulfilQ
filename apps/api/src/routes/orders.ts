@@ -18,6 +18,7 @@ import {
 } from '../middleware/auth.ts';
 import { HttpError } from '../middleware/errorHandler.ts';
 import { writeAuditLog } from '../services/auditService.ts';
+import { scheduleCsvSync } from '../services/csvService.ts';
 import { reserveStockForOrder } from '../services/inventoryService.ts';
 import { transitionOrderStatus } from '../services/orderStateMachine.ts';
 
@@ -195,6 +196,8 @@ export function createOrdersRouter(db: DbClient): Router {
             reason: `Stock reserved for ${expiryMinutes} minutes`,
           });
         });
+
+        scheduleCsvSync(db);
 
         res.status(201).json({
           contractVersion: CONTRACT_VERSION,
@@ -506,6 +509,8 @@ export function createOrdersRouter(db: DbClient): Router {
             reason: body.reason,
           });
         });
+
+        scheduleCsvSync(db);
 
         res.json({
           orderId: req.params.id,

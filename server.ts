@@ -6,12 +6,14 @@ import { getConfig } from './apps/api/src/config.ts';
 import { getDb } from './apps/api/src/db/index.ts';
 import { seedDatabase } from './apps/api/src/db/seed.ts';
 import { startReservationExpiryJob } from './apps/api/src/jobs/reservationExpiryJob.ts';
+import { syncLocalCsvFiles } from './apps/api/src/services/csvService.ts';
 import { createApiApp } from './apps/api/src/app.ts';
 
 async function bootstrap() {
   const cfg = getConfig();
   const db = getDb();
   await seedDatabase(db, false);
+  await syncLocalCsvFiles(db);
   startReservationExpiryJob(db, 30_000);
 
   const app = createApiApp(db);

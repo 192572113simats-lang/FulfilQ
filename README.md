@@ -101,7 +101,8 @@ npm run build
 ## API Overview (v1.0.0)
 
 - **Health & Docs:** `GET /health`, `GET /ready`, `GET /api/docs`, `GET /api/docs.json`
-- **Auth:** `POST /api/auth/login` (rate-limited), `GET /api/auth/me`
+- **Auth:** `POST /api/auth/register` (self-service customer signup), `POST /api/auth/login` (rate-limited), `GET /api/auth/me`
+- **Local CSV Database:** `GET /api/csv/status`, `POST /api/csv/sync`, `GET /api/csv/template/:dataset`, `GET /api/csv/export/:dataset`, `POST /api/csv/import/:dataset` (`users`, `inventory`, `orders`, `returns`, `audit` mirrored under `CSV_DIR=./data/csv`)
 - **Catalog & Regions:** `GET /api/regions`, `GET /api/warehouses`, `GET /api/products`, `GET /api/products/:id`
 - **Orders & Tracking:** `POST /api/orders`, `GET /api/orders`, `GET /api/orders/:id`, `PATCH /api/orders/:id/status`, `GET /api/orders/:id/tracking`
 - **Payments & Reconciliation:** `POST /api/payments` (requires `Idempotency-Key`), `POST /api/payments/:orderId/retry`, `GET /api/finance/reconciliation`

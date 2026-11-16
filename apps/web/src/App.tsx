@@ -11,6 +11,7 @@ import { DispatchPage } from './pages/DispatchPage.tsx';
 import { SupportPage } from './pages/SupportPage.tsx';
 import { FinancePage } from './pages/FinancePage.tsx';
 import { AdminPage } from './pages/AdminPage.tsx';
+import { CsvManagerPage } from './pages/CsvManagerPage.tsx';
 import { DeliveryBoardPage } from './pages/DeliveryBoardPage.tsx';
 
 function RequireRoleRoute({
@@ -98,6 +99,14 @@ export default function App() {
               element={
                 <RequireRoleRoute allowed={[Role.ADMIN]}>
                   <AdminPage />
+                </RequireRoleRoute>
+              }
+            />
+            <Route
+              path="/csv-data"
+              element={
+                <RequireRoleRoute>
+                  <CsvManagerPage />
                 </RequireRoleRoute>
               }
             />

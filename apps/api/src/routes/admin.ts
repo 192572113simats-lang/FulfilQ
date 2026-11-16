@@ -6,6 +6,7 @@ import { DbClient } from '../db/index.ts';
 import { requireAuth, requireRole } from '../middleware/auth.ts';
 import { HttpError } from '../middleware/errorHandler.ts';
 import { writeAuditLog } from '../services/auditService.ts';
+import { scheduleCsvSync } from '../services/csvService.ts';
 import { getActivePaymentGateway } from '../services/paymentGateway.ts';
 
 const CreateRegionSchema = RegionPolicySchema.extend({
@@ -97,6 +98,7 @@ export function createAdminRouter(db: DbClient): Router {
           });
         });
 
+        scheduleCsvSync(db);
         res.json({ id: req.params.id, role: body.role });
       } catch (err) {
         next(err);
@@ -174,6 +176,7 @@ export function createAdminRouter(db: DbClient): Router {
           });
         });
 
+        scheduleCsvSync(db);
         res.status(201).json({ region: body });
       } catch (err) {
         next(err);
@@ -254,6 +257,7 @@ export function createAdminRouter(db: DbClient): Router {
           });
         });
 
+        scheduleCsvSync(db);
         res.json({
           region: {
             regionId: req.params.regionId,
@@ -287,6 +291,7 @@ export function createAdminRouter(db: DbClient): Router {
         if (upd.rowCount === 0) {
           throw new HttpError(404, 'PRODUCT_NOT_FOUND', 'Product not found');
         }
+        scheduleCsvSync(db);
         res.json({ productId: req.params.id, lowStockThreshold: body.lowStockThreshold });
       } catch (err) {
         next(err);

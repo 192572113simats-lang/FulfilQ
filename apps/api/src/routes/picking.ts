@@ -5,6 +5,7 @@ import { DbClient } from '../db/index.ts';
 import { maskPhone, requireAuth, requireRole } from '../middleware/auth.ts';
 import { HttpError } from '../middleware/errorHandler.ts';
 import { writeAuditLog } from '../services/auditService.ts';
+import { scheduleCsvSync } from '../services/csvService.ts';
 import { transitionOrderStatus } from '../services/orderStateMachine.ts';
 
 const ScanSchema = z.object({
@@ -209,6 +210,7 @@ export function createPickingRouter(db: DbClient): Router {
           };
         });
 
+        scheduleCsvSync(db);
         res.json(updatedResult);
       } catch (err) {
         next(err);
@@ -252,6 +254,7 @@ export function createPickingRouter(db: DbClient): Router {
           });
         });
 
+        scheduleCsvSync(db);
         res.json({
           orderId: req.params.orderId,
           status: result.toStatus,

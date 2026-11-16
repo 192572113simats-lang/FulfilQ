@@ -5,6 +5,7 @@ import { DbClient } from '../db/index.ts';
 import { requireAuth, requireRole } from '../middleware/auth.ts';
 import { HttpError } from '../middleware/errorHandler.ts';
 import { writeAuditLog } from '../services/auditService.ts';
+import { scheduleCsvSync } from '../services/csvService.ts';
 import { applyManualStockCorrection } from '../services/inventoryService.ts';
 
 const StockCorrectionSchema = z.object({
@@ -103,6 +104,7 @@ export function createAlertsRouter(db: DbClient): Router {
           return { ...alert, status: 'RESOLVED' };
         });
 
+        scheduleCsvSync(db);
         res.json({ alert: updated });
       } catch (err) {
         next(err);
@@ -126,6 +128,7 @@ export function createAlertsRouter(db: DbClient): Router {
           reason: body.reason,
           actor: { id: user.id, name: user.fullName, role: user.role },
         });
+        scheduleCsvSync(db);
         res.status(201).json(result);
       } catch (err) {
         next(err);

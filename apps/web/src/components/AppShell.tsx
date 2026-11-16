@@ -19,6 +19,18 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/finance', label: 'Finance & Audit', roles: [Role.FINANCE_REVIEWER, Role.ADMIN] },
   { to: '/admin', label: 'Admin Policy', roles: [Role.ADMIN] },
   {
+    to: '/csv-data',
+    label: 'CSV Database',
+    roles: [
+      Role.CUSTOMER,
+      Role.PICKER,
+      Role.SUPPORT_AGENT,
+      Role.STORE_MANAGER,
+      Role.FINANCE_REVIEWER,
+      Role.ADMIN,
+    ],
+  },
+  {
     to: '/delivery-board',
     label: 'Delivery Board',
     roles: [

@@ -3,6 +3,7 @@ import { OrderStatus, PaymentRequestPayloadSchema, Role } from '@fulfilliq/share
 import { DbClient } from '../db/index.ts';
 import { requireAuth, requireRole } from '../middleware/auth.ts';
 import { HttpError } from '../middleware/errorHandler.ts';
+import { scheduleCsvSync } from '../services/csvService.ts';
 import { executeIdempotentPayment, retryPendingPayment } from '../services/paymentGateway.ts';
 
 export function createPaymentsRouter(db: DbClient): Router {
@@ -37,6 +38,10 @@ export function createPaymentsRouter(db: DbClient): Router {
           syntheticCardLast4: payload.syntheticCardLast4,
           simulatedOutcome: payload.simulatedOutcome,
         });
+
+        if (!result.replayed) {
+          scheduleCsvSync(db);
+        }
 
         res.status(result.statusCode).json({
           ...result.body,
@@ -73,6 +78,7 @@ export function createPaymentsRouter(db: DbClient): Router {
           orderId: req.params.orderId,
           actor: { id: user.id, name: user.fullName, role: user.role },
         });
+        scheduleCsvSync(db);
         res.status(result.statusCode).json(result.body);
       } catch (err) {
         next(err);

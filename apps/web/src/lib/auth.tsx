@@ -10,10 +10,18 @@ export interface SessionUser {
   warehouseId: string | null;
 }
 
+export interface RegisterInput {
+  email: string;
+  password: string;
+  fullName: string;
+  phone: string;
+}
+
 interface AuthContextValue {
   user: SessionUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<SessionUser>;
+  register: (input: RegisterInput) => Promise<SessionUser>;
   logout: () => void;
   announce: (message: string) => void;
   liveMessage: string;
@@ -57,6 +65,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return res.user;
   }, [announce]);
 
+  const register = useCallback(async (input: RegisterInput) => {
+    const res = await apiFetch<{ accessToken: string; user: SessionUser }>('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+    setStoredToken(res.accessToken);
+    setUser(res.user);
+    announce(`Account created for ${res.user.fullName} and stored locally`);
+    return res.user;
+  }, [announce]);
+
   const logout = useCallback(() => {
     setStoredToken(null);
     setUser(null);
@@ -64,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [announce]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, announce, liveMessage }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, announce, liveMessage }}>
       {children}
     </AuthContext.Provider>
   );

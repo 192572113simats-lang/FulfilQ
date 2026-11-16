@@ -12,13 +12,18 @@ export interface TestHarness {
   db: UnifiedDbClient;
   app: Express;
   dbPath: string;
+  csvDir: string;
   cleanup: () => Promise<void>;
   login: (email: string) => Promise<string>;
 }
 
 export async function createTestHarness(): Promise<TestHarness> {
   process.env.NODE_ENV = 'test';
-  const dbPath = path.join(os.tmpdir(), `fulfilliq-test-${crypto.randomUUID()}.db`);
+  const id = crypto.randomUUID();
+  const dbPath = path.join(os.tmpdir(), `fulfilliq-test-${id}.db`);
+  const csvDir = path.join(os.tmpdir(), `fulfilliq-csv-${id}`);
+  process.env.CSV_DIR = csvDir;
+
   const db = new UnifiedDbClient({ dialect: 'sqlite', sqlitePath: dbPath });
   await seedDatabase(db, true);
   const app = createApiApp(db);
@@ -27,12 +32,16 @@ export async function createTestHarness(): Promise<TestHarness> {
     db,
     app,
     dbPath,
+    csvDir,
     cleanup: async () => {
       await db.close();
       for (const suffix of ['', '-wal', '-shm']) {
         if (fs.existsSync(dbPath + suffix)) {
           fs.unlinkSync(dbPath + suffix);
         }
+      }
+      if (fs.existsSync(csvDir)) {
+        fs.rmSync(csvDir, { recursive: true, force: true });
       }
     },
     login: async (email: string) => {

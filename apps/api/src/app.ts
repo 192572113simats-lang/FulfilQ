@@ -10,6 +10,7 @@ import { createAlertsRouter } from './routes/alerts.ts';
 import { createAuditRouter } from './routes/audit.ts';
 import { createAuthRouter } from './routes/auth.ts';
 import { createCatalogRouter } from './routes/catalog.ts';
+import { createCsvRouter } from './routes/csv.ts';
 import { createDeliveryBoardRouter } from './routes/deliveryBoard.ts';
 import { createHealthRouter } from './routes/health.ts';
 import { createOrdersRouter } from './routes/orders.ts';
@@ -48,12 +49,13 @@ export function createApiApp(db: DbClient): Express {
     })
   );
 
-  app.use(express.json({ limit: '1mb' }));
+  app.use(express.json({ limit: '2mb' }));
 
   app.use(createHealthRouter(db));
   app.use('/api', createDocsRouter());
   app.use('/api/auth', createAuthRouter(db));
   app.use('/api', createCatalogRouter(db));
+  app.use('/api', createCsvRouter(db));
   app.use('/api', createOrdersRouter(db));
   app.use('/api', createPaymentsRouter(db));
   app.use('/api', createPickingRouter(db));
